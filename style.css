@@ -21,7 +21,8 @@ body {
 /* 头部样式 */
 header {
     padding: 40px 0;
-    border-bottom: 1px solid #eee;
+    background-color: #0a2463;
+    color: white;
 }
 
 header .container {
@@ -33,7 +34,7 @@ header .container {
 h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #222;
+    color: white;
     margin: 0;
 }
 
@@ -46,13 +47,13 @@ nav ul {
 
 nav a {
     text-decoration: none;
-    color: #666;
+    color: white;
     font-size: 1rem;
     transition: color 0.3s ease;
 }
 
 nav a:hover {
-    color: #000;
+    color: #a8dadc;
 }
 
 /* 主内容样式 */
@@ -60,10 +61,127 @@ main {
     padding: 40px 0;
 }
 
+.main-container {
+    display: flex;
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.content-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.sidebar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
 #posts-container {
     display: flex;
     flex-direction: column;
     gap: 40px;
+}
+
+/* 搜索和标签样式 */
+.search-box {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.search-box h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #0a2463;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2b93c6;
+    box-shadow: 0 0 0 2px rgba(43, 147, 198, 0.1);
+}
+
+.tags-cloud {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.tags-cloud h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #0a2463;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-item {
+    background-color: #e6f7e6;
+    color: #4caf50;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tag-item:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+.tag-item.active {
+    background-color: #2e7d32;
+    color: white;
+}
+
+/* 分类列表样式 */
+.categories-list {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.categories-list h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #0a2463;
+}
+
+.categories-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.categories-list li {
+    margin-bottom: 10px;
+}
+
+.categories-list a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.categories-list a:hover {
+    color: #2b93c6;
 }
 
 .post-item {
@@ -80,7 +198,7 @@ main {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #222;
+    color: #0a2463;
 }
 
 .post-title a {
@@ -90,15 +208,20 @@ main {
 }
 
 .post-title a:hover {
-    color: #0066cc;
+    color: #2b93c6;
 }
 
 .post-meta {
     font-size: 0.9rem;
-    color: #999;
+    color: #666;
     margin-bottom: 15px;
     display: flex;
     gap: 20px;
+}
+
+.post-meta .post-category {
+    color: #2b93c6;
+    font-weight: 500;
 }
 
 .post-excerpt {
@@ -117,11 +240,13 @@ main {
 .post-content h1 {
     font-size: 2rem;
     margin-bottom: 30px;
+    color: #0a2463;
 }
 
 .post-content h2 {
     font-size: 1.5rem;
     margin: 30px 0 20px;
+    color: #2b93c6;
 }
 
 .post-content p {
@@ -146,19 +271,21 @@ main {
 }
 
 .post-content code {
-    background-color: #f5f5f5;
+    background-color: #f0f7fc;
     padding: 2px 6px;
     border-radius: 3px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.9rem;
+    color: #0a2463;
 }
 
 .post-content pre {
-    background-color: #f5f5f5;
+    background-color: #f0f7fc;
     padding: 20px;
     border-radius: 4px;
     overflow-x: auto;
     margin: 20px 0;
+    border-left: 4px solid #2b93c6;
 }
 
 .post-content pre code {
@@ -176,6 +303,7 @@ main {
 .about-content h1 {
     font-size: 2rem;
     margin-bottom: 30px;
+    color: #0a2463;
 }
 
 .about-content p {
@@ -186,12 +314,13 @@ main {
 /* 底部样式 */
 footer {
     padding: 40px 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #e0e0e0;
     margin-top: 60px;
+    background-color: #f8f9fa;
 }
 
 footer p {
-    color: #999;
+    color: #666;
     font-size: 0.9rem;
     margin-bottom: 20px;
 }
@@ -203,23 +332,36 @@ footer p {
 
 .social-links a {
     text-decoration: none;
-    color: #666;
+    color: #2b93c6;
     font-size: 0.9rem;
     transition: color 0.3s ease;
 }
 
 .social-links a:hover {
-    color: #000;
+    color: #0a2463;
 }
 
 /* 响应式设计 */
+@media (max-width: 992px) {
+    .main-container {
+        flex-direction: column;
+        max-width: 800px;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
     header {
         padding: 30px 0;
+        background-color: #0a2463;
     }
 
     h1 {
         font-size: 2rem;
+        color: white;
     }
 
     main {
@@ -232,11 +374,13 @@ footer p {
 
     .post-title {
         font-size: 1.3rem;
+        color: #0a2463;
     }
 
     footer {
         padding: 30px 0;
         margin-top: 40px;
+        background-color: #f8f9fa;
     }
 }
 
@@ -244,6 +388,10 @@ footer p {
     nav ul {
         flex-direction: column;
         gap: 15px;
+    }
+
+    nav a {
+        color: white;
     }
 
     .post-meta {
@@ -255,4 +403,20 @@ footer p {
         flex-direction: column;
         gap: 10px;
     }
+
+    .social-links a {
+        color: #2b93c6;
+    }
+
+    .main-container {
+        gap: 30px;
+        padding: 0 15px;
+    }
+}
+
+/* 文章内容页面样式 */
+.post-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }

@@ -40,6 +40,13 @@ const posts = [
     }
 ];
 
+// 全局变量，用于存储当前筛选状态
+let currentFilters = {
+    search: '',
+    tag: '',
+    category: ''
+};
+
 // 初始化页面
 function initPage() {
     // 更新页面标题
@@ -60,6 +67,116 @@ function initPage() {
     } else {
         // 渲染首页文章列表
         renderPostList();
+    }
+    
+    // 渲染侧边栏内容
+    if (!window.location.pathname.includes('post.html')) {
+        renderSidebar();
+    }
+}
+
+// 渲染侧边栏内容
+function renderSidebar() {
+    renderTags();
+    initSearch();
+}
+
+// 提取所有唯一标签
+function getAllTags() {
+    const tagsSet = new Set();
+    posts.forEach(post => {
+        post.tags.forEach(tag => {
+            tagsSet.add(tag);
+        });
+    });
+    return Array.from(tagsSet);
+}
+
+// 渲染标签云
+function renderTags() {
+    const tagsList = document.getElementById('tags-list');
+    if (tagsList) {
+        const tags = getAllTags();
+        tagsList.innerHTML = '';
+        
+        tags.forEach(tag => {
+            const tagElement = document.createElement('span');
+            tagElement.className = `tag-item ${currentFilters.tag === tag ? 'active' : ''}`;
+            tagElement.textContent = tag;
+            tagElement.addEventListener('click', () => {
+                if (currentFilters.tag === tag) {
+                    currentFilters.tag = '';
+                } else {
+                    currentFilters.tag = tag;
+                }
+                renderTags();
+                renderFilteredPosts();
+            });
+            tagsList.appendChild(tagElement);
+        });
+    }
+}
+
+// 初始化搜索功能
+function initSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            currentFilters.search = e.target.value.toLowerCase();
+            renderFilteredPosts();
+        });
+    }
+}
+
+// 根据筛选条件过滤文章
+function getFilteredPosts() {
+    return posts.filter(post => {
+        // 搜索筛选
+        const matchesSearch = currentFilters.search === '' || 
+            post.title.toLowerCase().includes(currentFilters.search) ||
+            post.excerpt.toLowerCase().includes(currentFilters.search);
+        
+        // 标签筛选
+        const matchesTag = currentFilters.tag === '' || 
+            post.tags.includes(currentFilters.tag);
+        
+        // 分类筛选
+        const matchesCategory = currentFilters.category === '' || 
+            post.category === currentFilters.category;
+        
+        return matchesSearch && matchesTag && matchesCategory;
+    }).sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// 渲染筛选后的文章列表
+function renderFilteredPosts() {
+    const container = document.getElementById('posts-container');
+    if (container) {
+        const filteredPosts = getFilteredPosts();
+        container.innerHTML = '';
+        
+        if (filteredPosts.length === 0) {
+            container.innerHTML = '<p>没有找到匹配的文章</p>';
+            return;
+        }
+        
+        filteredPosts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.className = 'post-item';
+            
+            postElement.innerHTML = `
+                <h2 class="post-title">
+                    <a href="post.html?id=${post.id}">${post.title}</a>
+                </h2>
+                <div class="post-meta">
+                    <span class="post-date">${post.date}</span>
+                    <span class="post-category">${post.category}</span>
+                </div>
+                <div class="post-excerpt">${post.excerpt}</div>
+            `;
+            
+            container.appendChild(postElement);
+        });
     }
 }
 
@@ -112,6 +229,9 @@ function renderCategoryPostList() {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
     
+    // 设置当前分类筛选
+    currentFilters.category = category;
+    
     // 更新页面标题
     const categoryTitle = document.getElementById('category-title');
     if (categoryTitle) {
@@ -120,38 +240,8 @@ function renderCategoryPostList() {
     
     document.title = `${category} | ${blogConfig.title} | ${blogConfig.subtitle}`;
     
-    const container = document.getElementById('posts-container');
-    if (container) {
-        container.innerHTML = '';
-        
-        // 过滤并按日期降序排序
-        const filteredPosts = [...posts]
-            .filter(post => post.category === category)
-            .sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        if (filteredPosts.length === 0) {
-            container.innerHTML = '<p>该分类下暂无文章</p>';
-            return;
-        }
-        
-        filteredPosts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.className = 'post-item';
-            
-            postElement.innerHTML = `
-                <h2 class="post-title">
-                    <a href="post.html?id=${post.id}">${post.title}</a>
-                </h2>
-                <div class="post-meta">
-                    <span class="post-date">${post.date}</span>
-                    <span class="post-category">${post.category}</span>
-                </div>
-                <div class="post-excerpt">${post.excerpt}</div>
-            `;
-            
-            container.appendChild(postElement);
-        });
-    }
+    // 渲染筛选后的文章列表
+    renderFilteredPosts();
 }
 
 // 渲染文章内容

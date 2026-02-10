@@ -20,11 +20,28 @@
         </div>
     </header>
 
-    <main class="container">
-        <section id="posts-container">
-            <!-- 文章列表将通过JavaScript动态生成 -->
-        </section>
-    </main>
+    <div class="main-container">
+        <div class="content-area">
+            <section id="posts-container">
+                <!-- 文章列表将通过JavaScript动态生成 -->
+            </section>
+        </div>
+        <div class="sidebar">
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <h3>搜索文章</h3>
+                <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索...">
+            </div>
+            
+            <!-- 标签云 -->
+            <div class="tags-cloud">
+                <h3>文章标签</h3>
+                <div class="tags-list" id="tags-list">
+                    <!-- 标签将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="container">
