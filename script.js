@@ -66,7 +66,7 @@ function initPage() {
         renderCategoryPostList();
     } else {
         // 渲染首页文章列表
-        renderPostList();
+        renderPosts();
     }
     
     // 渲染侧边栏内容
@@ -95,133 +95,100 @@ function getAllTags() {
 // 渲染标签云
 function renderTags() {
     const tagsList = document.getElementById('tags-list');
-    if (tagsList) {
-        const tags = getAllTags();
-        tagsList.innerHTML = '';
-        
-        tags.forEach(tag => {
-            const tagElement = document.createElement('span');
-            tagElement.className = `tag-item ${currentFilters.tag === tag ? 'active' : ''}`;
-            tagElement.textContent = tag;
-            tagElement.addEventListener('click', () => {
-                if (currentFilters.tag === tag) {
-                    currentFilters.tag = '';
-                } else {
-                    currentFilters.tag = tag;
-                }
-                renderTags();
-                renderFilteredPosts();
-            });
-            tagsList.appendChild(tagElement);
+    if (!tagsList) return;
+    
+    const tags = getAllTags();
+    tagsList.innerHTML = '';
+    
+    tags.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = `tag-item ${currentFilters.tag === tag ? 'active' : ''}`;
+        tagElement.textContent = tag;
+        tagElement.addEventListener('click', () => {
+            currentFilters.tag = currentFilters.tag === tag ? '' : tag;
+            renderTags();
+            renderPosts();
         });
-    }
+        tagsList.appendChild(tagElement);
+    });
 }
 
 // 初始化搜索功能
 function initSearch() {
     const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            currentFilters.search = e.target.value.toLowerCase();
-            renderFilteredPosts();
-        });
-    }
+    if (!searchInput) return;
+    
+    searchInput.addEventListener('input', (e) => {
+        currentFilters.search = e.target.value.toLowerCase();
+        renderPosts();
+    });
 }
 
 // 根据筛选条件过滤文章
 function getFilteredPosts() {
     return posts.filter(post => {
         // 搜索筛选
-        const matchesSearch = currentFilters.search === '' || 
+        const matchesSearch = !currentFilters.search || 
             post.title.toLowerCase().includes(currentFilters.search) ||
             post.excerpt.toLowerCase().includes(currentFilters.search);
         
         // 标签筛选
-        const matchesTag = currentFilters.tag === '' || 
+        const matchesTag = !currentFilters.tag || 
             post.tags.includes(currentFilters.tag);
         
         // 分类筛选
-        const matchesCategory = currentFilters.category === '' || 
+        const matchesCategory = !currentFilters.category || 
             post.category === currentFilters.category;
         
         return matchesSearch && matchesTag && matchesCategory;
     }).sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
-// 渲染筛选后的文章列表
-function renderFilteredPosts() {
+// 渲染文章列表（通用函数，替代原有的renderPostList和renderFilteredPosts）
+function renderPosts() {
     const container = document.getElementById('posts-container');
-    if (container) {
-        const filteredPosts = getFilteredPosts();
-        container.innerHTML = '';
-        
-        if (filteredPosts.length === 0) {
-            container.innerHTML = '<p>没有找到匹配的文章</p>';
-            return;
-        }
-        
-        filteredPosts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.className = 'post-item';
-            
-            postElement.innerHTML = `
-                <h2 class="post-title">
-                    <a href="post.html?id=${post.id}">${post.title}</a>
-                </h2>
-                <div class="post-meta">
-                    <span class="post-date">${post.date}</span>
-                    <span class="post-category">${post.category}</span>
-                </div>
-                <div class="post-excerpt">${post.excerpt}</div>
-            `;
-            
-            container.appendChild(postElement);
-        });
+    if (!container) return;
+    
+    const filteredPosts = getFilteredPosts();
+    container.innerHTML = '';
+    
+    if (filteredPosts.length === 0) {
+        container.innerHTML = '<p>没有找到匹配的文章</p>';
+        return;
     }
+    
+    filteredPosts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.className = 'post-item';
+        
+        postElement.innerHTML = `
+            <h2 class="post-title">
+                <a href="post.html?id=${post.id}">${post.title}</a>
+            </h2>
+            <div class="post-meta">
+                <span class="post-date">${post.date}</span>
+                <span class="post-category">${post.category}</span>
+            </div>
+            <div class="post-excerpt">${post.excerpt}</div>
+        `;
+        
+        container.appendChild(postElement);
+    });
 }
 
 // 渲染社交链接
 function renderSocialLinks() {
     const socialLinksContainer = document.querySelector('.social-links');
-    if (socialLinksContainer) {
-        socialLinksContainer.innerHTML = '';
-        blogConfig.socialLinks.forEach(link => {
-            const a = document.createElement('a');
-            a.href = link.url;
-            a.target = '_blank';
-            a.textContent = link.name;
-            socialLinksContainer.appendChild(a);
-        });
-    }
-}
-
-// 渲染文章列表
-function renderPostList() {
-    const container = document.getElementById('posts-container');
-    if (container) {
-        container.innerHTML = '';
-        
-        // 按日期降序排序
-        const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        sortedPosts.forEach(post => {
-            const postElement = document.createElement('div');
-            postElement.className = 'post-item';
-            
-            postElement.innerHTML = `
-                <h2 class="post-title">
-                    <a href="post.html?id=${post.id}">${post.title}</a>
-                </h2>
-                <div class="post-meta">
-                    <span class="post-date">${post.date}</span>
-                    <span class="post-category">${post.category}</span>
-                </div>
-                <div class="post-excerpt">${post.excerpt}</div>
-            `;
-            
-            container.appendChild(postElement);
-        });
-    }
+    if (!socialLinksContainer) return;
+    
+    socialLinksContainer.innerHTML = '';
+    blogConfig.socialLinks.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.target = '_blank';
+        a.textContent = link.name;
+        socialLinksContainer.appendChild(a);
+    });
 }
 
 // 渲染分类文章列表
@@ -240,8 +207,8 @@ function renderCategoryPostList() {
     
     document.title = `${category} | ${blogConfig.title} | ${blogConfig.subtitle}`;
     
-    // 渲染筛选后的文章列表
-    renderFilteredPosts();
+    // 渲染文章列表
+    renderPosts();
 }
 
 // 渲染文章内容
@@ -250,13 +217,13 @@ function renderPost() {
     const postId = urlParams.get('id');
     
     if (!postId) {
-        document.body.innerHTML = '<div class="container"><h1>文章不存在</h1><p>请检查链接是否正确。</p></div>';
+        showError('文章不存在', '请检查链接是否正确。');
         return;
     }
     
     const post = posts.find(p => p.id === postId);
     if (!post) {
-        document.body.innerHTML = '<div class="container"><h1>文章不存在</h1><p>请检查链接是否正确。</p></div>';
+        showError('文章不存在', '请检查链接是否正确。');
         return;
     }
     
@@ -317,8 +284,19 @@ function renderPost() {
         })
         .catch(error => {
             console.error('Error loading post:', error);
-            document.body.innerHTML = '<div class="container"><h1>加载失败</h1><p>文章内容加载失败，请稍后重试。</p></div>';
+            showError('加载失败', '文章内容加载失败，请稍后重试。');
         });
+}
+
+// 显示错误页面
+function showError(title, message) {
+    document.body.innerHTML = `
+        <div class="container" style="text-align: center; padding: 100px 20px;">
+            <h1>${title}</h1>
+            <p>${message}</p>
+            <a href="index.html" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #0a2463; color: white; text-decoration: none; border-radius: 4px;">返回首页</a>
+        </div>
+    `;
 }
 
 // 页面加载完成后初始化
