@@ -54,6 +54,9 @@ function initPage() {
         renderPost();
     } else if (window.location.pathname.includes('about.html')) {
         // 关于页面无需特殊处理
+    } else if (window.location.pathname.includes('category.html')) {
+        // 渲染分类文章列表
+        renderCategoryPostList();
     } else {
         // 渲染首页文章列表
         renderPostList();
@@ -85,6 +88,53 @@ function renderPostList() {
         const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
         
         sortedPosts.forEach(post => {
+            const postElement = document.createElement('div');
+            postElement.className = 'post-item';
+            
+            postElement.innerHTML = `
+                <h2 class="post-title">
+                    <a href="post.html?id=${post.id}">${post.title}</a>
+                </h2>
+                <div class="post-meta">
+                    <span class="post-date">${post.date}</span>
+                    <span class="post-category">${post.category}</span>
+                </div>
+                <div class="post-excerpt">${post.excerpt}</div>
+            `;
+            
+            container.appendChild(postElement);
+        });
+    }
+}
+
+// 渲染分类文章列表
+function renderCategoryPostList() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category');
+    
+    // 更新页面标题
+    const categoryTitle = document.getElementById('category-title');
+    if (categoryTitle) {
+        categoryTitle.textContent = category || '分类';
+    }
+    
+    document.title = `${category} | ${blogConfig.title} | ${blogConfig.subtitle}`;
+    
+    const container = document.getElementById('posts-container');
+    if (container) {
+        container.innerHTML = '';
+        
+        // 过滤并按日期降序排序
+        const filteredPosts = [...posts]
+            .filter(post => post.category === category)
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (filteredPosts.length === 0) {
+            container.innerHTML = '<p>该分类下暂无文章</p>';
+            return;
+        }
+        
+        filteredPosts.forEach(post => {
             const postElement = document.createElement('div');
             postElement.className = 'post-item';
             
@@ -156,6 +206,7 @@ function renderPost() {
                             <ul>
                                 <li><a href="index.html">首页</a></li>
                                 <li><a href="about.html">关于</a></li>
+                                <li><a href="category.html?category=生活">生活</a></li>
                             </ul>
                         </nav>
                     </div>
