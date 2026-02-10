@@ -1,6 +1,6 @@
 // 博客配置
 const blogConfig = {
-    title: "个人博客",
+    title: "Riddle的个人博客",
     subtitle: "留学·语言·AI·工作·海外生活",
     socialLinks: [
         { name: "GitHub", url: "https://github.com/MaRiddleH" },
