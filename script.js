@@ -262,8 +262,9 @@ function renderPost() {
                         <nav>
                             <ul>
                                 <li><a href="index.html">首页</a></li>
-                                <li><a href="about.html">关于</a></li>
                                 <li><a href="category.html?category=生活">生活</a></li>
+                                <li><a href="category.html?category=PFAS">PFAS</a></li>
+                                <li><a href="about.html">关于</a></li>
                             </ul>
                         </nav>
                     </div>
