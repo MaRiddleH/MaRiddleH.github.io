@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档转换 | Riddle的个人博客</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .converter-container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 45px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .converter-container h1 {
+            font-size: 2.2rem;
+            margin-bottom: 35px;
+            color: var(--primary-color);
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            background-color: rgba(248, 249, 250, 0.8);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(240, 247, 252, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(43, 147, 198, 0.2);
+        }
+        
+        .upload-area.drag-over {
+            border-color: var(--accent-color);
+            background-color: rgba(230, 247, 230, 0.8);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(10, 36, 99, 0.4);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(240, 247, 252, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(43, 147, 198, 0.2);
+            text-align: left;
+        }
+        
+        .file-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .file-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .file-size {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .download-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-color), #388e3c);
+            color: white;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .download-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .error-message {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 224, 224, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(244, 67, 54, 0.2);
+            color: #c62828;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .converter-container {
+                padding: 35px 25px;
+                margin: 40px auto;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
+            }
+            
+            .converter-container h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .converter-container {
+                padding: 25px 20px;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+            
+            .upload-icon {
+                font-size: 2.5rem;
+            }
+            
+            .converter-container h1 {
+                font-size: 1.5rem;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Riddle的个人博客</h1>
+            <nav>
+                <ul>
+                  <li><a href="index.html">首页</a></li>
+                  <li><a href="category.html?category=生活">生活</a></li>
+                  <li><a href="category.html?category=PFAS">PFAS</a></li>
+                  <li><a href="document-converter.html">文档转换</a></li>
+                  <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="converter-container">
+        <h1>文档转换</h1>
+        
+        <div class="upload-area" id="upload-area">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">
+                <p>拖放文件到这里，或</p>
+                <label class="upload-btn" for="file-input">选择文件</label>
+                <input type="file" id="file-input" class="file-input" multiple>
+            </div>
+        </div>
+        
+        <div class="file-info" id="file-info" style="display: none;">
+            <h3>已上传文件</h3>
+            <ul class="file-list" id="file-list"></ul>
+        </div>
+        
+        <div class="error-message" id="error-message"></div>
+        
+        <div class="download-section">
+            <button class="download-btn" id="download-btn">下载文件</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Riddle的个人博客. 保留所有权利.</p>
+            <div class="social-links">
+                <!-- 社交链接将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // 文档转换页面脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const fileInfo = document.getElementById('file-info');
+            const fileList = document.getElementById('file-list');
+            const downloadBtn = document.getElementById('download-btn');
+            const errorMessage = document.getElementById('error-message');
+            
+            let uploadedFiles = [];
+            
+            // 拖放事件处理
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                uploadArea.classList.add('drag-over');
+            }
+            
+            function unhighlight() {
+                uploadArea.classList.remove('drag-over');
+            }
+            
+            // 处理文件拖放
+            uploadArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            function handleFiles(files) {
+                if (files.length === 0) return;
+                
+                // 清空之前的错误信息
+                errorMessage.style.display = 'none';
+                
+                // 处理每个文件
+                Array.from(files).forEach(file => {
+                    // 检查文件大小（限制为10MB）
+                    if (file.size > 10 * 1024 * 1024) {
+                        showError(`文件 ${file.name} 过大，请上传小于10MB的文件`);
+                        return;
+                    }
+                    
+                    // 添加到上传文件列表
+                    uploadedFiles.push(file);
+                    addFileToUI(file);
+                });
+                
+                // 更新下载按钮状态
+                updateDownloadButton();
+            }
+            
+            function addFileToUI(file) {
+                // 显示文件信息区域
+                fileInfo.style.display = 'block';
+                
+                // 创建文件项
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${formatFileSize(file.size)}</span>
+                `;
+                
+                fileList.appendChild(li);
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+            
+            function updateDownloadButton() {
+                if (uploadedFiles.length > 0) {
+                    downloadBtn.classList.add('active');
+                } else {
+                    downloadBtn.classList.remove('active');
+                }
+            }
+            
+            // 下载文件处理
+            downloadBtn.addEventListener('click', function() {
+                if (uploadedFiles.length === 0) return;
+                
+                // 对于本示例，我们将直接下载第一个文件
+                // 在实际应用中，您可能需要处理文件转换逻辑
+                const file = uploadedFiles[0];
+                downloadFile(file);
+            });
+            
+            function downloadFile(file) {
+                // 创建一个Blob对象（在实际应用中，这里可能是转换后的文件）
+                const blob = new Blob([file], { type: file.type });
+                const url = URL.createObjectURL(blob);
+                
+                // 创建下载链接
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                
+                // 触发下载
+                a.click();
+                
+                // 清理
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }
+            
+            // 初始化页面
+            initPage();
+        });
+    </script>
+</body>
+</html>

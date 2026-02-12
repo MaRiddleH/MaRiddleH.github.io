@@ -235,30 +235,31 @@ const render = {
         });
         
         // 替换页面内容
-        document.body.innerHTML = `
-          <header>
-            <div class="container">
-              <h1>${blogConfig.title}</h1>
-              <nav>
-                <ul>
-                  <li><a href="index.html">首页</a></li>
-                  <li><a href="category.html?category=生活">生活</a></li>
-                  <li><a href="category.html?category=PFAS">PFAS</a></li>
-                  <li><a href="about.html">关于</a></li>
-                </ul>
-              </nav>
-            </div>
-          </header>
-          ${postContent.outerHTML}
-          <footer>
-            <div class="container">
-              <p>&copy; 2026 ${blogConfig.title}. 保留所有权利.</p>
-              <div class="social-links">
-                <!-- 社交链接将通过JavaScript动态生成 -->
-              </div>
-            </div>
-          </footer>
-        `;
+            document.body.innerHTML = `
+                <header>
+                    <div class="container">
+                        <h1>${blogConfig.title}</h1>
+                        <nav>
+                            <ul>
+                                <li><a href="index.html">首页</a></li>
+                                <li><a href="category.html?category=生活">生活</a></li>
+                                <li><a href="category.html?category=PFAS">PFAS</a></li>
+                                <li><a href="document-converter.html">文档转换</a></li>
+                                <li><a href="about.html">关于</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </header>
+                ${postContent.outerHTML}
+                <footer>
+                    <div class="container">
+                        <p>&copy; 2026 ${blogConfig.title}. 保留所有权利.</p>
+                        <div class="social-links">
+                            <!-- 社交链接将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </footer>
+            `;
         
         // 重新渲染社交链接
         render.socialLinks();
