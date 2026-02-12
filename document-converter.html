@@ -324,9 +324,9 @@
                 
                 // 处理每个文件
                 Array.from(files).forEach(file => {
-                    // 检查文件大小（限制为10MB）
-                    if (file.size > 10 * 1024 * 1024) {
-                        showError(`文件 ${file.name} 过大，请上传小于10MB的文件`);
+                    // 检查文件大小（限制为100MB）
+                    if (file.size > 100 * 1024 * 1024) {
+                        showError(`文件 ${file.name} 过大，请上传小于100MB的文件`);
                         return;
                     }
                     
