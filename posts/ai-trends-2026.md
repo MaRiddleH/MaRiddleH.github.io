@@ -12,7 +12,7 @@
 
 2. 修改qoder和trae的setting
 
-```
+```json
 #qoder 的 setting
 增加
 {
@@ -58,7 +58,7 @@
 
 原因是md中的表格形式是html形式，pandoc识别不了，最后通过先将表格转为md的pipe table解决的
 
-```
+```json
 # Copyright (c) Opendatalab. All rights reserved.
 import subprocess
 import os
@@ -388,7 +388,5 @@ if __name__ == "__main__":
  ` openclaw dashboard`
 
 ### 2.2 openclaw 链接qq
-
-
 
 ## 3. 经期管理小程序
