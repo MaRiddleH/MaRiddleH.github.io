@@ -241,11 +241,11 @@ const render = {
                         <h1>${blogConfig.title}</h1>
                         <nav>
                             <ul>
-                                <li><a href="index.html">首页</a></li>
-                                <li><a href="category.html?category=生活">生活</a></li>
-                                <li><a href="category.html?category=PFAS">PFAS</a></li>
-                                <li><a href="document-converter.html">文档转换</a></li>
-                                <li><a href="about.html">关于</a></li>
+                                <li><a href="/index.html">首页</a></li>
+                                <li><a href="/category.html?category=生活">生活</a></li>
+                                <li><a href="/category.html?category=PFAS">PFAS</a></li>
+                                <li><a href="/document-converter.html">文档转换</a></li>
+                                <li><a href="/about.html">关于</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -285,6 +285,42 @@ const render = {
   sidebar: () => {
     render.tags();
     initSearch();
+  },
+  
+  // 渲染导航栏
+  navigation: () => {
+    const nav = utils.getElement('nav');
+    if (!nav) return;
+    
+    // 确保导航栏包含文档转换链接
+    const navList = nav.querySelector('ul');
+    if (!navList) return;
+    
+    // 检查是否已包含文档转换链接
+    const hasConverterLink = Array.from(navList.children).some(li => {
+      const a = li.querySelector('a');
+      return a && a.href.includes('document-converter.html');
+    });
+    
+    // 如果没有文档转换链接，添加它
+    if (!hasConverterLink) {
+      const converterLi = utils.createElement('li', {
+        innerHTML: '<a href="/document-converter.html">文档转换</a>'
+      });
+      
+      // 找到PFAS链接，在其后添加文档转换链接
+      const pfasLi = Array.from(navList.children).find(li => {
+        const a = li.querySelector('a');
+        return a && a.href.includes('category.html?category=PFAS');
+      });
+      
+      if (pfasLi) {
+        pfasLi.insertAdjacentElement('afterend', converterLi);
+      } else {
+        // 如果没有PFAS链接，添加到导航栏末尾
+        navList.appendChild(converterLi);
+      }
+    }
   }
 };
 
@@ -306,6 +342,9 @@ function initPage() {
   
   // 渲染社交链接
   render.socialLinks();
+  
+  // 确保导航栏包含文档转换链接
+  render.navigation();
   
   // 检查当前页面
   const pathname = window.location.pathname;
